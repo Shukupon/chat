@@ -38,6 +38,8 @@ io.on(
     {
         console.log('connection');
 
+        let strNickname = ''; //コネクションごとで固有のニックネーム。イベントを跨いで使用される。
+
         //切断時の処理
         // ・クライアントが切断したら、サーバー側では'disconnect'イベントが発生する
         socket.on(
@@ -45,6 +47,19 @@ io.on(
             () =>
             {
                 console.log('disconnect');
+            }
+        );
+
+        //入室時の処理
+        //・クライアント側のメッセージ送信時の「socket.emit('join', strNickname);」に対する処理[12]
+        socket.on(
+            'join',
+            (strNickname_) =>
+            {
+                console.log('joined:', strNickname_);
+
+                //コネクションごとで固有のニックネームに設定
+                strNickname = strNickname_;
             }
         );
 
@@ -61,6 +76,7 @@ io.on(
 
                 //メッセージオブジェクトの作成
                 const objMessage = {
+                    strNickname: strNickname,
                     strMessage: strMessage,
                     strDate: strNow
                 }
